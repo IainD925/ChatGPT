@@ -66,6 +66,7 @@ class TradingBot:
             return self.get_stock_contract(symbol)
         else:
             raise ValueError("Invalid contract type.")
+    
     def create_order(self, action, quantity, order_type='MARKET', limit_price=None, tif=None):
         if order_type == 'MARKET':
             order = MarketOrder(action, quantity)
@@ -205,7 +206,7 @@ bot = TradingBot()
 
 # Connect to Interactive Brokers API
 # bot.disconnect()
-bot.connect(host='127.0.0.1', port=7496, client_id=2)  # Live port: 7496 Test: 7497
+bot.connect(host='127.0.0.1', port=7497, client_id=1)  # Live port: 7496 Test: 7497
 
 # Check connection / Call accountSummary
 # bot.accountSummary()
