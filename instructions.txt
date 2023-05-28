@@ -1,0 +1,18 @@
+How and where can I trade both bitcoin and US stocks via a trading platform that has API functionality
+
+Create a Python TradingBot using the ib_insync library.
+Implement methods for connecting, disconnecting, and displaying the account summary. Open a connection and retrieve the account summary.
+
+Update the script so that it can retrieve Bitcoin (symbol BTC) price in the USD currency via the PAXOS exchange with security type equal to CRYPTO 
+
+Add the ability to place a limit buy order 
+
+Error: Invalid time in force 
+
+Update the script to add time in force to be IOC 
+
+Add a trading strategy based on the Parabolic SAR indicator using the TALIB library 
+
+display the bitcoin price for the past 30 days on a chart and overlay the parabolic SAR Buy and sell signals 
+
+Error – OK... time to move to one I prepaired earlier
