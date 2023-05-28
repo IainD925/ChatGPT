@@ -91,7 +91,6 @@ class TradingBot:
             contract = self.get_stock_contract(symbol)
             what_to_show = 'TRADES'
         historical_data = self.ib.reqHistoricalData(contract, endDateTime='', durationStr=duration, barSizeSetting=bar_size, whatToShow=what_to_show, useRTH=True)
-       #historical_data = self.ib.reqHistoricalData(contract, endDateTime='', durationStr=f'{duration}', barSizeSetting=f'{bar_size}', whatToShow=what_to_show, useRTH=True)
 
         df = util.df(historical_data)
         df.index = pandas.to_datetime(df['date'])
