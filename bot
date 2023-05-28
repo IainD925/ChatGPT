@@ -90,8 +90,7 @@ class TradingBot:
         else:
             contract = self.get_stock_contract(symbol)
             what_to_show = 'TRADES'
-        historical_data = self.ib.reqHistoricalData(contract, endDateTime='', durationStr=duration, barSizeSetting=bar_size, whatToShow=what_to_show, useRTH=True)
-
+        historical_data = self.ib.reqHistoricalData(contract, endDateTime='', durationStr=f'{duration}', barSizeSetting=f'{bar_size}', whatToShow=what_to_show, useRTH=True)
         df = util.df(historical_data)
         df.index = pandas.to_datetime(df['date'])
         return df
@@ -121,13 +120,13 @@ class TradingBot:
                signals.append(('BUY', df.index[i]))
             elif parabolic_sar[i] > df.loc[df.index[i], 'close'] and parabolic_sar[i - 1] <= df.loc[df.index[i - 1], 'close']:
                     signals.append(('SELL', df.index[i]))
-        df['signal'] = 0
-        for signal, date in signals:
-            if signal == 'BUY':
-                df.loc[date, 'signal'] = 1
-            elif signal == 'SELL':
-                df.loc[date, 'signal'] = -1
-        return df
+            df['signal'] = 0
+            for signal, date in signals:
+                if signal == 'BUY':
+                    df.loc[date, 'signal'] = 1
+                elif signal == 'SELL':
+                    df.loc[date, 'signal'] = -1
+            return df
     
     def get_latest_SAR_signal_df(self, df, symbol):
         latest_buy_signal = None
@@ -163,7 +162,6 @@ def plot_chart(df,chart_ticker):
         ax.scatter(df[df['signal'] == -1].index, df[df['signal'] == -1]['close'], label='Sell Signal', marker='v', color='r', s=100)
         # Set the title and labels
         ax.set_title(f"{chart_ticker['symbol']} Price with Parabolic SAR Buy and Sell Signals")
-        
         ax.set_xlabel('Date')
         ax.set_ylabel('Price')
         # Set the date format
@@ -206,7 +204,8 @@ def backtest_strategy(df, initial_cash=100000, commission=0.0015):
 bot = TradingBot()
 
 # Connect to Interactive Brokers API
-bot.connect(host='127.0.0.1', port=7497, client_id=9)  # Live port: 7496 Test: 7497
+# bot.disconnect()
+bot.connect(host='127.0.0.1', port=7497, client_id=1)  # Live port: 7496 Test: 7497
 
 # Check connection / Call accountSummary
 #bot.accountSummary()
@@ -214,8 +213,8 @@ bot.connect(host='127.0.0.1', port=7497, client_id=9)  # Live port: 7496 Test: 7
 ## BTC
 # Check BTC Price
 btc_price = bot.get_crypto_data('BTC')
-if btc_price:
-    print(f"BTC Price: {btc_price}")
+if btc_price: print(f"BTC Price: {btc_price}")
+else: print("BTC Price not available")
 
 # Get historical data for Bitcoin
 historical_data = bot.get_historical_data('BTC', contract_type='CRYPTO', duration='90 D', bar_size='1 hour')
@@ -234,7 +233,7 @@ print(latest_signal)
 # Plot the chart
 plot_chart(signal_df,latest_signal)
 
-# ! PLACING TRADES HERE ! #
+# ! TRADING ! #
 if latest_signal['signal'] == 'BUY':
     # Buy 0.001 BTC. Note: IB doesn't support GTC for Crypto. Options are Immediate Or Cancel (IOC) or Minutes (cancels after 5 minutes)
     limit_buy_order = bot.create_order('BUY', 0.001, order_type='LIMIT', limit_price=btc_price, tif='IOC')
@@ -287,7 +286,6 @@ def run_backtest(symbol, signal_df):
 run_backtest('BTC', signal_df)
 run_backtest('QQQ', stock_signal_df)
 
-# Unused
-# Start TCP server to listen for local instructions
+# Start the TCP server to listen for buy/sell instructions
 # bot.start_server(host='localhost', port=9999)
 # bot.disconnect()
