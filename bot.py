@@ -208,7 +208,7 @@ bot = TradingBot()
 bot.connect(host='127.0.0.1', port=7496, client_id=2)  # Live port: 7496 Test: 7497
 
 # Check connection / Call accountSummary
-#bot.accountSummary()
+# bot.accountSummary()
 
 ## BTC
 # Check BTC Price
@@ -263,9 +263,6 @@ print(stock_latest_signal)
 
 # Plot the chart
 plot_chart(stock_signal_df,stock_latest_signal)
-
-#symbol = stock_latest_signal['symbol']
-#print(stock_symbol)
 
 ### BACKTESTING
 # Run backtest on signal_df
