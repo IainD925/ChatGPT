@@ -120,13 +120,13 @@ class TradingBot:
                signals.append(('BUY', df.index[i]))
             elif parabolic_sar[i] > df.loc[df.index[i], 'close'] and parabolic_sar[i - 1] <= df.loc[df.index[i - 1], 'close']:
                     signals.append(('SELL', df.index[i]))
-            df['signal'] = 0
-            for signal, date in signals:
-                if signal == 'BUY':
-                    df.loc[date, 'signal'] = 1
-                elif signal == 'SELL':
-                    df.loc[date, 'signal'] = -1
-            return df
+        df['signal'] = 0
+        for signal, date in signals:
+            if signal == 'BUY':
+                df.loc[date, 'signal'] = 1
+            elif signal == 'SELL':
+                df.loc[date, 'signal'] = -1
+        return df
     
     def get_latest_SAR_signal_df(self, df, symbol):
         latest_buy_signal = None
@@ -205,7 +205,7 @@ bot = TradingBot()
 
 # Connect to Interactive Brokers API
 # bot.disconnect()
-bot.connect(host='127.0.0.1', port=7497, client_id=1)  # Live port: 7496 Test: 7497
+bot.connect(host='127.0.0.1', port=7496, client_id=2)  # Live port: 7496 Test: 7497
 
 # Check connection / Call accountSummary
 #bot.accountSummary()
