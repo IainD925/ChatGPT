@@ -16,3 +16,35 @@ Add a trading strategy based on the Parabolic SAR indicator using the TALIB libr
 display the bitcoin price for the past 30 days on a chart and overlay the parabolic SAR Buy and sell signals 
 
 Expected Error ... time to move to one I prepaired earlier
+
+-----
+
+Plugin Text:
+Sure, here is a description of a process flowchart based on the chunks of code you provided. 
+
+1. **Start**: Represents the initiation of the process.
+
+2. **Initialize Trading Bot**: Here, an instance of the trading bot is created.
+
+3. **Connect to API**: The bot then establishes a connection with the Interactive Brokers API.
+
+4. **Get BTC Price**: The bot retrieves the current Bitcoin price using the `get_crypto_data` method.
+
+5. **Get BTC Historical Data**: The bot fetches the historical Bitcoin data using the `get_historical_data` method.
+
+6. **Generate Signals**: Using the fetched data, the bot generates trading signals using the `generate_signals` method.
+
+7. **Get Latest SAR Signal**: The bot then retrieves the latest trading signal using the `get_latest_SAR_signal_df` method.
+
+8. **Trade Execution Decision**: 
+    - If the latest signal is a 'BUY', it creates a limit buy order and executes it.
+    - If the latest signal is a 'SELL', it creates a limit sell order and executes it.
+    - If the signal is neither 'BUY' nor 'SELL', no trading action is taken.
+
+9. **Repeat Steps 4-8 for Stock**: Repeat the same process for a stock, in this case, 'QQQ'.
+
+10. **Backtesting**: With both Bitcoin and stock data, the bot conducts backtesting using the `backtest_strategy` method.
+
+11. **End**: Represents the completion of the process.
+
+These steps are based on the high-level understanding of the script you provided. You can add more detailed sub-steps based on the specific functionality and requirements of your bot. Also, remember that flowcharts can be created using various tools such as Lucidchart, Draw.io, Microsoft Visio, and others.
