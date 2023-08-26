@@ -1,7 +1,8 @@
+#python
 import logging
 import socket
 import time
-from ib_insync import IB, Contract, MarketOrder, LimitOrder, util
+from ib_insync import IB, Contract, MarketOrder, LimitOrder, util,  BarDataList
 import datetime
 import numpy
 import pandas
@@ -29,6 +30,34 @@ class TradingBot:
         for summary in account_summary:
             print(summary.tag, summary.value)
     
+    def get_adx_and_sar(self, history_days=30):
+        if self.ib.isConnected():
+            contract = Contract(symbol='BTC', secType='CRYPTO', exchange='PAXOS', currency='USD')
+            bars = self.ib.reqHistoricalData(contract, '', f'{history_days} D', '1 day', 'AGGTRADES', False)
+            self.ib.sleep(2)
+            
+            # Debug: Print the contents of 'bars'
+            print(f"Bars: {bars}")
+        
+            if isinstance(bars, BarDataList):
+                high = numpy.array([bar.high for bar in bars])
+                low = numpy.array([bar.low for bar in bars])
+                close = numpy.array([bar.close for bar in bars])
+                
+                # Debug: Print the contents of 'high', 'low', 'close'
+                print(f"High: {high}, Low: {low}, Close: {close}")
+            
+                sar = talib.SAR(high, low)
+                adx = talib.ADX(high, low, close, timeperiod=14)
+            
+                return adx, sar, close
+            else:
+                print("Failed to retrieve historical price data.")
+                return None, None, None
+        else:
+            print("Not connected. Please connect to the server first.")
+            return None, None, None
+        
     def get_crypto_contract(self, symbol, exchange='PAXOS', currency='USD'):
         contract = Contract()
         contract.symbol = symbol
@@ -234,6 +263,13 @@ print(latest_signal)
 # Plot the chart
 plot_chart(signal_df,latest_signal)
 
+adx, sar, close = bot.get_adx_and_sar(history_days=30)
+
+# Output the values or use them in further processing
+print(f"ADX: {adx}")
+print(f"SAR: {sar}")
+print(f"Close Prices: {close}")
+
 # ! TRADING ! #
 if latest_signal['signal'] == 'BUY':
     # Buy 0.001 BTC. Note: IB doesn't support GTC for Crypto. Options are Immediate Or Cancel (IOC) or Minutes (cancels after 5 minutes)
@@ -248,6 +284,7 @@ elif latest_signal['signal'] == 'SELL':
 else:
     print("No signal or unrecognized signal.")
 
+'''
 # STOCKS
 # Request historical stock data for QQQ
 stock_historical_data = bot.get_historical_data('QQQ', contract_type='STOCK', duration='90 D', bar_size='1 hour')
@@ -264,7 +301,7 @@ print(stock_latest_signal)
 
 # Plot the chart
 plot_chart(stock_signal_df,stock_latest_signal)
-
+'''
 ### BACKTESTING
 # Run backtest on signal_df
 initial_value = 10000
@@ -282,7 +319,7 @@ def run_backtest(symbol, signal_df):
 
 # Run backtests for BTC and QQQ
 run_backtest('BTC', signal_df)
-run_backtest('QQQ', stock_signal_df)
+#run_backtest('QQQ', stock_signal_df)
 
 # Start the TCP server to listen for buy/sell instructions
 # bot.start_server(host='localhost', port=9999)
