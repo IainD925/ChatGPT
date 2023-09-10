@@ -39,7 +39,8 @@ class TradingBot:
             # Debug: Print the contents of 'bars'
             print(f"Bars: {bars}")
         
-            if isinstance(bars, BarDataList):
+            if bars is not None and len(bars) > 0:
+            #if isinstance(bars, BarDataList):
                 high = numpy.array([bar.high for bar in bars])
                 low = numpy.array([bar.low for bar in bars])
                 close = numpy.array([bar.close for bar in bars])
@@ -49,14 +50,16 @@ class TradingBot:
             
                 sar = talib.SAR(high, low)
                 adx = talib.ADX(high, low, close, timeperiod=14)
+                plus_dm = talib.PLUS_DM(high, low, timeperiod=14)
+                minus_dm = talib.MINUS_DM(high, low, timeperiod=14)
             
-                return adx, sar, close
+                return adx, sar, close, plus_dm, minus_dm
             else:
                 print("Failed to retrieve historical price data.")
-                return None, None, None
+                return None, None, None, None, None
         else:
             print("Not connected. Please connect to the server first.")
-            return None, None, None
+            return None, None, None, None, None
         
     def get_crypto_contract(self, symbol, exchange='PAXOS', currency='USD'):
         contract = Contract()
@@ -263,10 +266,12 @@ print(latest_signal)
 # Plot the chart
 plot_chart(signal_df,latest_signal)
 
-adx, sar, close = bot.get_adx_and_sar(history_days=30)
+adx, sar, close,plus_dm,minus_dm = bot.get_adx_and_sar(history_days=30)
 
 # Output the values or use them in further processing
 print(f"ADX: {adx}")
+print(f"ADX: {plus_dm}")
+print(f"SAR: {minus_dm}")
 print(f"SAR: {sar}")
 print(f"Close Prices: {close}")
 
